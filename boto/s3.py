@@ -1,7 +1,9 @@
 import sqlite3 as lite
+from datetime import datetime
 
 import boto3
 import pandas as pd
+from pymongo import MongoClient
 
 
 def list_buckets():
@@ -42,17 +44,36 @@ def create_table(con):
         curr.execute("INSERT INTO Population VALUES(NULL, 'Spain', 46439864)")
 
 
-def main():
-    df = get_csv_with_client()
-
-    con = lite.connect("population.db")
-
-    # create_table(con)
+def query_lite(con):
 
     query = "SELECT country FROM Population WHERE country LIKE 'S%';"
 
     df = pd.read_sql_query(query, con)
-    print(df)
+
+
+def demonstrate_sql(df):
+    con = lite.connect("population.db")
+    # create_table(con)
+    query_lite()
+
+
+def demonstrate_nosql(df):
+    client = MongoClient()
+    db = client["tutorial"]
+    coll = db["articles"]
+
+    doc = {
+        "title": "An article about mongoDB",
+        "author": "marco",
+        "publication_date": datetime.utcnow(),
+    }
+
+    doc_id = coll.insert_one(doc).inserted_id
+
+
+def main():
+    df = get_csv_with_client()
+    demonstrate_nosql(df)
 
 
 if __name__ == "__main__":
