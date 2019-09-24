@@ -44,9 +44,10 @@ def main():
     print(
         reduce(
             lambda x, y: dict(
-                list(x.items())
-                + list(y.items())
-                + [(k, x[k] + y[k]) for k in set(x) & set(y)]
+                [
+                    (k, (x[k] if k in x else 0) + (y[k] if k in y else 0))
+                    for k in set(x) | set(y)
+                ]
             ),
             list(
                 map(
@@ -66,6 +67,22 @@ def main():
             ),
         )
     ),
+
+    histogram = lambda l: reduce(
+        lambda x, y: dict(
+            [
+                (k, (x[k] if k in x else 0) + (y[k] if k in y else 0))
+                for k in set(x) | set(y)
+            ]
+        ),
+        list(map(lambda x: {x: 1}, l)),
+    )
+
+    print(
+        histogram(
+            ["Deer", "Bear", "River", "Car", "Car", "River", "Deer", "Car", "Bear"]
+        )
+    )
 
 
 if __name__ == "__main__":
