@@ -15,10 +15,15 @@ def main():
         "Advertising.csv", header=True, inferSchema=True
     )
 
+    # Drop the first column
     regressionDataFrame = regressionDataFrame.drop("_c0")
 
+    # Show the first 10 items inside of the dataframe
     regressionDataFrame.show(10)
 
+    print(regressionDataFrame.describe())
+
+    #
     regressionDataRDD = regressionDataFrame.rdd.map(list)
 
     regressionDataLabelPoint = regressionDataRDD.map(
@@ -32,8 +37,12 @@ def main():
     regressionLabelPointTestData = regressionLabelPointSplit[1]
 
     ourModelWithLinearRegression = lrSGD.train(
-        data=regressionLabelPointTrainData, iterations=200, step=0.02, intercept=True
+        data=regressionLabelPointTrainData, iterations=100, step=0.0002, intercept=True
     )
+
+    print(ourModelWithLinearRegression)
+
+    ourModelWithLinearRegression.predict(regressionLabelPointTestData)
 
 
 if __name__ == "__main__":
